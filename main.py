@@ -37,7 +37,6 @@ class Tetris:
         self.key_pressed = False
         
     def new_piece(self):
-        """Create a new piece at the top of the board"""
         shape = random.choice(SHAPES)
         self.current_piece = shape
         self.current_x = WIDTH // 2 - len(shape[0]) // 2
@@ -47,7 +46,6 @@ class Tetris:
             self.game_over = True
     
     def rotate_piece(self):
-        """Rotate the current piece 90 degrees clockwise"""
         if not self.current_piece:
             return
             
@@ -66,7 +64,6 @@ class Tetris:
             self.current_piece = old_piece
     
     def is_valid_move(self, x: int, y: int) -> bool:
-        """Check if the current piece can be placed at the given position"""
         if not self.current_piece:
             return False
             
@@ -83,7 +80,6 @@ class Tetris:
         return True
     
     def merge_piece(self):
-        """Merge the current piece into the board"""
         if not self.current_piece:
             return
             
@@ -96,7 +92,6 @@ class Tetris:
         self.new_piece()
     
     def clear_lines(self):
-        """Clear completed lines and update score"""
         lines_cleared = 0
         y = HEIGHT - 1
         while y >= 0:
@@ -111,7 +106,6 @@ class Tetris:
             self.score += (100 * lines_cleared * lines_cleared)
     
     def move(self, dx: int, dy: int):
-        """Move the current piece by dx and dy"""
         if not self.current_piece:
             return
             
@@ -125,7 +119,6 @@ class Tetris:
         return False
     
     def handle_input(self):
-        """Handle keyboard input"""
         if msvcrt.kbhit():
             key = msvcrt.getch()
             if key == b'\xe0':  # Arrow key
@@ -142,13 +135,10 @@ class Tetris:
                 self.game_over = True
     
     def draw(self):
-        """Draw the game board"""
         os.system('cls' if os.name == 'nt' else 'clear')
         
-        # Draw top border
         print('┌' + '─' * (WIDTH * 2) + '┐')
         
-        # Draw board
         for y in range(HEIGHT):
             print(BORDER, end='')
             for x in range(WIDTH):
@@ -161,7 +151,6 @@ class Tetris:
                     print(self.board[y][x] * 2, end='')
             print(BORDER)
         
-        # Draw bottom border
         print('└' + '─' * (WIDTH * 2) + '┘')
         
         # Draw score and debug info
@@ -177,21 +166,17 @@ def main():
     game = Tetris()
     game.new_piece()
     
-    # Main game loop
     last_drop = time.time()
     while not game.game_over:
         with game.lock:
-            # Handle input
             game.handle_input()
             
-            # Handle piece dropping
             current_time = time.time()
-            if current_time - last_drop > 0.5:  # Drop piece every 0.5 seconds
+            if current_time - last_drop > 0.5: 
                 if not game.move(0, 1):
                     game.merge_piece()
                 last_drop = current_time
             
-            # Draw the game
             game.draw()
             time.sleep(0.1)
     
